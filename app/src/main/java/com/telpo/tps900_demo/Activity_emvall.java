@@ -1,5 +1,6 @@
 package com.telpo.tps900_demo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
@@ -126,13 +127,14 @@ public class Activity_emvall extends Activity {
         //获取电源管理器对象
         PowerManager pm=(PowerManager) context.getSystemService(Context.POWER_SERVICE);
         //获取PowerManager.WakeLock对象,后面的参数|表示同时传入两个值,最后的是LogCat里用的Tag
-        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK,"bright");
+        @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK,"bright");
         //点亮屏幕
         wl.acquire();
         //释放
         wl.release();
     }
 
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -625,6 +627,21 @@ public class Activity_emvall extends Activity {
         @Override
         public int OnCheckException_qvsdc(int index, String PAN) {
             return EmvService.EMV_TRUE;
+        }
+
+        @Override
+        public int onMir_FinishReadAppData() {
+            return 0;
+        }
+
+        @Override
+        public int onMir_DataExchange() {
+            return 0;
+        }
+
+        @Override
+        public int onMir_Hint() {
+            return 0;
         }
     };
 

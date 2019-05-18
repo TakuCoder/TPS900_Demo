@@ -14,7 +14,7 @@ import static com.telpo.tps900_demo.R.id.emv_all;
 public class EMVActivity extends Activity {
 
     TextView title_tv;
-    Button emv_all,emv_ic,emv_magnetic,paypass,paywave,pinpad_example,pinpad_des,pinpad_rsa,pinpad_dukpt,nfc_detect;
+    Button emv_all,emv_ic,emv_magnetic,paypass,paywave,pinpad_example,pinpad_des,pinpad_rsa,pinpad_dukpt,nfc_detect,mir;
     @Override
     protected void onCreate( Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -102,6 +102,13 @@ public class EMVActivity extends Activity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(EMVActivity.this,Activity_emvall.class));
+            }
+        });
+        mir=findViewById(R.id.mir);
+        mir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(EMVActivity.this,ActivityTPMir.class));
             }
         });
     }

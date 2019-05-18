@@ -1,5 +1,6 @@
 package com.telpo.tps900_demo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
@@ -80,7 +81,7 @@ public class ActivityVisaPaywave extends Activity {
         //获取电源管理器对象
         PowerManager pm=(PowerManager) context.getSystemService(Context.POWER_SERVICE);
         //获取PowerManager.WakeLock对象,后面的参数|表示同时传入两个值,最后的是LogCat里用的Tag
-        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK,"bright");
+        @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK,"bright");
         //点亮屏幕
         wl.acquire();
         //释放
@@ -115,6 +116,7 @@ public class ActivityVisaPaywave extends Activity {
     /**
      * 唤醒屏幕
      */
+    @SuppressLint("InvalidWakeLockTag")
     public void wakeScreen(Activity activity){
         //屏幕解锁
         km= (KeyguardManager) activity.getSystemService(Context.KEYGUARD_SERVICE);
@@ -130,6 +132,7 @@ public class ActivityVisaPaywave extends Activity {
         wakeLock.release();
     }
 
+    @SuppressLint("InvalidWakeLockTag")
     private void viewInit(){
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -386,6 +389,21 @@ public class ActivityVisaPaywave extends Activity {
         @Override
         public int OnCheckException_qvsdc(int index, String PAN) {
             return EmvService.EMV_FALSE;
+        }
+
+        @Override
+        public int onMir_FinishReadAppData() {
+            return 0;
+        }
+
+        @Override
+        public int onMir_DataExchange() {
+            return 0;
+        }
+
+        @Override
+        public int onMir_Hint() {
+            return 0;
         }
     };
 

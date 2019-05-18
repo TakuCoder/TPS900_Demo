@@ -159,6 +159,21 @@ public class ActivityTPPaypass extends Activity {
         public int OnCheckException_qvsdc(int index, String PAN) {
             return EmvService.EMV_TRUE;
         }
+
+        @Override
+        public int onMir_FinishReadAppData() {
+            return 0;
+        }
+
+        @Override
+        public int onMir_DataExchange() {
+            return 0;
+        }
+
+        @Override
+        public int onMir_Hint() {
+            return 0;
+        }
     };
     public static PaypassParam m_PaypassParam = new PaypassParam();
     @Override

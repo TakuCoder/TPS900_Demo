@@ -45,6 +45,8 @@
         <activity android:name=".SmarCardNewActivity" android:launchMode="singleTask"/>
         <activity android:name=".MegneticActivity" android:launchMode="singleTask"/>
         <activity android:name=".ActivityPrinter" android:launchMode="singleTask"/>
+        <activity android:name=".ActivityTPMir" android:launchMode="singleTask"/>
+        <activity android:name=".ActivityTPMirParam" android:launchMode="singleTask"/>
     </application>
 
 </manifest>

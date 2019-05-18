@@ -136,6 +136,21 @@ public class ActivityNFC extends Activity {
         public int OnCheckException_qvsdc(int index, String PAN) {
             return EmvService.EMV_TRUE;
         }
+
+        @Override
+        public int onMir_FinishReadAppData() {
+            return 0;
+        }
+
+        @Override
+        public int onMir_DataExchange() {
+            return 0;
+        }
+
+        @Override
+        public int onMir_Hint() {
+            return 0;
+        }
     };
 
     @Override
@@ -254,6 +269,9 @@ public class ActivityNFC extends Activity {
                                 case EmvService.NFC_KERNEL_DEFAUT_CARD_JCB:
                                     AppendDis("This is a JCB card" );
                                     break;
+                                case EmvService.NFC_KERNEL_DEFAUT_CARD_MIR:
+                                    AppendDis("This is a Mir card");
+                                    break;
                                 case EmvService.NFC_KERNEL_DEFAUT_CARD_UNKNOWN:
                                     AppendDis("This is an unknown card" );
                                     break;
@@ -327,6 +345,9 @@ public class ActivityNFC extends Activity {
                                     break;
                                 case EmvService.NFC_KERNEL_DEFAUT_CARD_JCB:
                                     AppendDis("This is a JCB card" );
+                                    break;
+                                case EmvService.NFC_KERNEL_DEFAUT_CARD_MIR:
+                                    AppendDis("This is a Mir card");
                                     break;
                                 case EmvService.NFC_KERNEL_DEFAUT_CARD_UNKNOWN:
                                     AppendDis("This is an unknown card" );
