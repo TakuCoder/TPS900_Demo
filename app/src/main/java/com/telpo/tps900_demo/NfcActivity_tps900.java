@@ -313,7 +313,7 @@ public class NfcActivity_tps900 extends Activity {
 				if (null != nfcData) {
 					handler.sendMessage(handler.obtainMessage(SHOW_NFC_DATA, nfcData));
 				} else {
-					Log.d(TAG, "Check Card timeout...");
+					Log.e(TAG, "Check Card timeout...");
 					handler.sendMessage(handler.obtainMessage(CHECK_NFC_TIMEOUT, null));
 				}
 			} catch (TelpoException e) {
@@ -335,7 +335,12 @@ public class NfcActivity_tps900 extends Activity {
 		pSendAPDU = toByteArray(apduStr);
 		length = pSendAPDU.length;
 		try {
+
+			long time1 = System.currentTimeMillis();
 			result = nfc.transmit(pSendAPDU, length);
+			long time2 = System.currentTimeMillis();
+			Log.e("yw_time",""+(time2-time1));
+
 		} catch (TelpoException e) {
 			e.printStackTrace();
 		}

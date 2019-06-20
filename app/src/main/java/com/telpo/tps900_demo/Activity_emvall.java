@@ -129,6 +129,7 @@ public class Activity_emvall extends Activity {
         //获取PowerManager.WakeLock对象,后面的参数|表示同时传入两个值,最后的是LogCat里用的Tag
         @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK,"bright");
         //点亮屏幕
+        //点亮屏幕
         wl.acquire();
         //释放
         wl.release();
@@ -766,6 +767,7 @@ public class Activity_emvall extends Activity {
                         EmvParam mEMVParam;
                         mEMVParam = new EmvParam();
                         mEMVParam.MerchName = "Telpo".getBytes();
+                     //   mEMVParam.MerchCateCode=
                         mEMVParam.MerchId = "123456789012345".getBytes();
                         mEMVParam.TermId = "12345678".getBytes();
                         mEMVParam.TerminalType = 0x22;

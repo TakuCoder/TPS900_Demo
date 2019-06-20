@@ -225,7 +225,11 @@ public class PsamActivity extends Activity
 		pRevAPDULen[0] = 300;
 		apduStr = mEditTextApdu.getText().toString();
 		pSendAPDU = toByteArray(apduStr);
+		long time1 = System.currentTimeMillis();
 		result = reader.transmit(pSendAPDU);
+		long time2 = System.currentTimeMillis();
+		Log.e("yw_time",""+(time2-time1));
+
 		textReader.setText(TextUtils.isEmpty(StringUtil.toHexString(result)) ? getString(R.string.send_APDU_fail) : getString(R.string.send_APDU_success) + StringUtil.toHexString(result));
 		if (!TextUtils.isEmpty(StringUtil.toHexString(result))) {
 			Toast.makeText(PsamActivity.this, getString(R.string.send_comm_success), Toast.LENGTH_SHORT).show();
