@@ -42,7 +42,6 @@ import com.telpo.emv.PaypassParam;
 import com.telpo.emv.PaypassResult;
 import com.telpo.emv.PaypassUserData;
 import com.telpo.emv.QvsdcParam;
-import com.telpo.emv.util.StringUtil;
 import com.telpo.pinpad.PinParam;
 import com.telpo.pinpad.PinpadService;
 import com.telpo.tps550.api.TelpoException;
@@ -50,6 +49,7 @@ import com.telpo.tps550.api.printer.UsbThermalPrinter;
 import com.telpo.tps900_demo.dialog.DialogListener;
 import com.telpo.tps900_demo.dialog.TelpoProgressDialog;
 import com.telpo.tps900_demo.dialog.WritePadDialog;
+import com.telpo.util.StringUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -405,14 +405,32 @@ public class Activity_emvall extends Activity {
                     PinpadService.Open(context);
                     wakeUpAndUnlock(context);
                     progressDialog.dismiss();// 显示密码键盘前  取消之前的提示
-                    ret = PinpadService.TP_PinpadGetPin(param);
+
+                  //  if (PinData.type==0){
+                        ret = PinpadService.TP_PinpadGetPin(param);
+
+
+
+                  /*  }else {
+                        ret=PinpadService.TP_PinpadGetPlainPin(param,0,0,0);  //明文pinpad
+
+                        if (ret== PinpadService.PIN_OK){
+                            PinData.Pin=param.Pin_Block;
+                        }
+                    }*/
+
+
+                  //
                     //  pin-block
                     Log.e("yw", "TP_PinpadGetPin: " +ret +"\nPinblock: " +StringUtil.bytesToHexString(param.Pin_Block) );
                     if ( ret == PinpadService.PIN_ERROR_CANCEL){
                         mResult = EmvService.ERR_USERCANCEL;
-                    }else if ( ret == PinpadService.PIN_OK && StringUtil.bytesToHexString(param.Pin_Block).contains("00000000")){
+
+                        Log.e("yw", "PIN_ERROR_CANCEL");
+                    }/*else if ( ret == PinpadService.PIN_OK && StringUtil.bytesToHexString(param.Pin_Block).contains("00000000")){
                         mResult = EmvService.ERR_NOPIN;
-                    }else if ( ret == PinpadService.PIN_OK ){
+                        Log.e("yw", "ERR_NOPIN");
+                    }*/else if ( ret == PinpadService.PIN_OK ){
                         mResult = EmvService.EMV_TRUE;
                     }else {
                         mResult = EmvService.EMV_FALSE;
@@ -571,7 +589,9 @@ public class Activity_emvall extends Activity {
 
                     try {
                         OnlineData.ResponeCode = "00".getBytes("ascii");
-                        return EmvService.ONLINE_APPROVE;
+                        return EmvService.ONLINE_APPROVE;//success
+
+                    //    return EmvService.ONLINE_FAILED;  //fail
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -779,6 +799,9 @@ public class Activity_emvall extends Activity {
                         emvService.Emv_SetParam(mEMVParam);
                     }
                     startMs = System.currentTimeMillis();
+
+                 //  emvService.Emv_SetOfflinePinCBenable(1);  //离线pin 也走oninputpin
+                 //   emvService.Emv_SetOfflinePiDisplayPan(0);  // 设置离线pinpad 不显示卡号
                     ret = emvService.Emv_StartApp(0);
                     Log.e("yw", "Emv_StartApp: " + ret);
                     if (ret==EmvService.EMV_TRUE){

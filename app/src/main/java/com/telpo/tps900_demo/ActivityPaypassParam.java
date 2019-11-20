@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.telpo.emv.PaypassParam;
-import com.telpo.emv.util.StringUtil;
+import com.telpo.util.StringUtil;
 
 public class ActivityPaypassParam extends Activity {
     EditText TermAddCaps,AppVersion,MagAppVersion,UDOL,KernelID,CardInputCap,SecurityCap,MobileSupport,TerminalType,

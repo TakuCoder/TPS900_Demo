@@ -13,9 +13,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.telpo.emv.EmvService;
-import com.telpo.emv.util.StringUtil;
 import com.telpo.pinpad.PinParam;
 import com.telpo.pinpad.PinpadService;
+import com.telpo.util.StringUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;

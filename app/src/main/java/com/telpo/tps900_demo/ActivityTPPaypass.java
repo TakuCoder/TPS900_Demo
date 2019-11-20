@@ -29,8 +29,8 @@ import com.telpo.emv.PaypassOutCome;
 import com.telpo.emv.PaypassParam;
 import com.telpo.emv.PaypassResult;
 import com.telpo.emv.PaypassUserData;
-import com.telpo.emv.util.StringUtil;
 import com.telpo.pinpad.PinParam;
+import com.telpo.util.StringUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;

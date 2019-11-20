@@ -43,7 +43,6 @@ import com.telpo.emv.PaypassParam;
 import com.telpo.emv.PaypassResult;
 import com.telpo.emv.PaypassUserData;
 import com.telpo.emv.QvsdcParam;
-import com.telpo.emv.util.StringUtil;
 import com.telpo.pinpad.PinParam;
 import com.telpo.pinpad.PinpadService;
 import com.telpo.tps550.api.TelpoException;
@@ -51,6 +50,7 @@ import com.telpo.tps550.api.printer.UsbThermalPrinter;
 import com.telpo.tps900_demo.dialog.DialogListener;
 import com.telpo.tps900_demo.dialog.TelpoProgressDialog;
 import com.telpo.tps900_demo.dialog.WritePadDialog;
+import com.telpo.util.StringUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;

@@ -26,7 +26,7 @@ import com.telpo.emv.EmvServiceListener;
 import com.telpo.emv.EmvTLV;
 import com.telpo.emv.MirParam;
 import com.telpo.emv.MirResult;
-import com.telpo.emv.util.StringUtil;
+import com.telpo.util.StringUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;

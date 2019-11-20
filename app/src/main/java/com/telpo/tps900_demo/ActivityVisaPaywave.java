@@ -24,8 +24,8 @@ import com.telpo.emv.EmvPinData;
 import com.telpo.emv.EmvService;
 import com.telpo.emv.EmvServiceListener;
 import com.telpo.emv.EmvTLV;
-import com.telpo.emv.util.StringUtil;
 import com.telpo.pinpad.PinParam;
+import com.telpo.util.StringUtil;
 
 import java.io.UnsupportedEncodingException;
 

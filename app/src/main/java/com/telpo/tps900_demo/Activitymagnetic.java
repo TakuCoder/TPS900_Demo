@@ -36,7 +36,6 @@ import com.telpo.emv.PaypassParam;
 import com.telpo.emv.PaypassResult;
 import com.telpo.emv.PaypassUserData;
 import com.telpo.emv.QvsdcParam;
-import com.telpo.emv.util.StringUtil;
 import com.telpo.pinpad.PinParam;
 import com.telpo.pinpad.PinpadService;
 import com.telpo.tps550.api.TelpoException;
@@ -44,6 +43,7 @@ import com.telpo.tps550.api.printer.UsbThermalPrinter;
 import com.telpo.tps900_demo.dialog.DialogListener;
 import com.telpo.tps900_demo.dialog.TelpoProgressDialog;
 import com.telpo.tps900_demo.dialog.WritePadDialog;
+import com.telpo.util.StringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -372,7 +372,7 @@ public class Activitymagnetic extends Activity {
                     wakeUpAndUnlock(context);
                     ret = PinpadService.TP_PinpadGetPin(param);
                     //  pin-block
-                    Log.e("yw", "TP_PinpadGetPin: " +ret +"\nPinblock: " +StringUtil.bytesToHexString(param.Pin_Block) );
+                    Log.e("yw", "TP_PinpadGetPin: " +ret +"\nPinblock: " + StringUtil.bytesToHexString(param.Pin_Block) );
                     if ( ret == PinpadService.PIN_ERROR_CANCEL){
                         //交易拒绝
                         rejectPlayer.start();

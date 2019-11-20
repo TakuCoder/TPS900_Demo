@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.telpo.emv.MirParam;
-import com.telpo.emv.util.StringUtil;
+import com.telpo.util.StringUtil;
 
 public class ActivityTPMirParam extends Activity {
 

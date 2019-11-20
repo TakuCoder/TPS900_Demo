@@ -96,7 +96,7 @@ public class NfcActivity_tps900 extends Activity {
 						readThread = new ReadThread();
 						readThread.start();
 						open_btn.setEnabled(false);
-						check_btn.setEnabled(false);
+						//check_btn.setEnabled(false);
 						close_btn.setEnabled(true);
 						break;
 					
@@ -227,7 +227,7 @@ public class NfcActivity_tps900 extends Activity {
 						Toast.makeText(NfcActivity_tps900.this, "Check card time out!", Toast.LENGTH_LONG).show();
 						open_btn.setEnabled(true);
 						close_btn.setEnabled(false);
-						check_btn.setEnabled(false);
+						//check_btn.setEnabled(false);
 					}break;
 					case SHOW_NFC_DATA:{
 						byte[] uid_data = (byte[]) msg.obj;
