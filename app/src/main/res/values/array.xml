@@ -1,59 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="keyType">
-        <item >MK</item>
-        <item >PIK</item>
-        <item >DEK</item>
-        <item >MAK</item>
-        <item >AESK</item>
+        <item>MK</item>
+        <item>PIK</item>
+        <item>DEK</item>
+        <item>MAK</item>
+        <item>AESK</item>
     </string-array>
 
     <string-array name="wrtmode">
-        <item >Direct</item>
-        <item >ENC</item>
-        <item >DEC</item>
-        <item >XOR</item>
+        <item>Direct</item>
+        <item>ENC</item>
+        <item>DEC</item>
+        <item>XOR</item>
     </string-array>
 
     <string-array name="wrtmode_Rsa">
-        <item >Direct</item>
+        <item>Direct</item>
     </string-array>
 
     <string-array name="desmode">
-        <item >DEC</item>
-        <item >ENC</item>
+        <item>DEC</item>
+        <item>ENC</item>
     </string-array>
 
     <string-array name="macmode">
-        <item >XOR</item>
-        <item >X99</item>
-        <item >PBOC</item>
+        <item>XOR</item>
+        <item>X99</item>
+        <item>PBOC</item>
     </string-array>
 
     <string-array name="aesalgm">
-        <item >ECB</item>
-        <item >CBC</item>
-        <item >CFB_128</item>
-        <item >OFB_128</item>
+        <item>ECB</item>
+        <item>CBC</item>
+        <item>CFB_128</item>
+        <item>OFB_128</item>
     </string-array>
 
     <string-array name="paddingmode">
-        <item >PKCS1</item>
-        <item >SSLV23</item>
-        <item >NoPadding</item>
-        <item >PKCS1_OAEP</item>
+        <item>PKCS1</item>
+        <item>SSLV23</item>
+        <item>NoPadding</item>
+        <item>PKCS1_OAEP</item>
     </string-array>
 
     <string-array name="pinblockformat">
-        <item >ISO 9564 0</item>
-        <item >ISO 9564 1</item>
-        <item >ISO 9564 2</item>
-        <item >ISO 9564 3</item>
+        <item>ISO 9564 0</item>
+        <item>ISO 9564 1</item>
+        <item>ISO 9564 2</item>
+        <item>ISO 9564 3</item>
     </string-array>
 
     <string-array name="is_show_pan">
-        <item >Not Show Pan</item>
-        <item >Show Pan</item>
+        <item>Not Show Pan</item>
+        <item>Show Pan</item>
 
+    </string-array>
+
+    <string-array name="list_CL_reader_caps_value">
+        <item>64</item>
+        <item>72</item>
+        <item>192</item>
+        <item>200</item>
+    </string-array>
+
+    <string-array name="list_terminal_type_value">
+        <item>34</item>
+        <item>33</item>
+        <item>35</item>
+    </string-array>
+
+    <string-array name="list_CL_reader_caps_name">
+        <item>≥3.0 Magstripe–CVM Not Required</item>
+        <item>≥3.0 Magstripe–CVM Required</item>
+        <item>≥3.0 EMV and Magstripe–CVM Not Required</item>
+        <item>≥3.0 EMV and Magstripe–CVM Required</item>
+    </string-array>
+
+    <string-array name="list_dectec_cda_name">
+        <item>Before TAA</item>
+        <item>After TAA</item>
+    </string-array>
+
+    <string-array name="list_dectec_cda_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="list_terminal_type_name">
+        <item>Online and Offline</item>
+        <item>Online Only</item>
+        <item>Offline Only</item>
     </string-array>
 </resources>

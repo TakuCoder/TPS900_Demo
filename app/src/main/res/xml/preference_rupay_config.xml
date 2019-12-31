@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="config_detail"
+        android:title="config detail">
+
+        <EditTextPreference
+            android:dialogTitle="TermId(9F1C)"
+            android:key="RupayParam_TermId"
+            android:maxLength="8"
+            android:title="TermId"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="TermAppVer(9F09)"
+            android:key="RupayParam_TermAppVer"
+            android:maxLength="4"
+            android:title="TermAppVer"></EditTextPreference>
+
+
+        <EditTextPreference
+            android:dialogTitle="TermCapabilitis(9F33)"
+            android:key="RupayParam_TermCapabilitis"
+            android:maxLength="6"
+            android:title="TermCapabilitis"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="TermAddCaps(9F40)"
+            android:key="RupayParam_TermAddCaps"
+            android:maxLength="10"
+            android:title="TermCapabilitis"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="TermCountryCode(9F1A)"
+            android:inputType="number"
+            android:key="RupayParam_TermCountryCode"
+            android:maxLength="4"
+            android:title="TermCountryCode"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="TermType(9F35)"
+            android:inputType="number"
+            android:key="RupayParam_TermType"
+            android:maxLength="2"
+            android:title="TermType"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="MerchCateCode(9F15)"
+            android:key="RupayParam_MerchCateCode"
+            android:maxLength="4"
+            android:title="MerchCateCode"></EditTextPreference>
+
+
+        <EditTextPreference
+            android:dialogTitle="NFC_TransLimit(DF4C)"
+            android:gravity="center_vertical|right"
+            android:inputType="numberDecimal"
+            android:key="RupayParam_NFC_TransLimit"
+            android:maxLength="17"
+            android:title="NFC_TransLimit"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="NFC_CVMLimit(DF4D)"
+            android:gravity="center_vertical|right"
+            android:inputType="numberDecimal"
+            android:key="RupayParam_NFC_CVMLimit"
+            android:maxLength="17"
+            android:title="NFC_CVMLimit"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="NFC_OffLineFloorLimit(9F1B)"
+            android:gravity="center_vertical|right"
+            android:inputType="numberDecimal"
+            android:key="RupayParam_NFC_OffLineFloorLimit"
+            android:maxLength="17"
+            android:title="NFC_OffLineFloorLimit"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="Torn Time Limit Sec"
+            android:inputType="numberDecimal"
+            android:key="RupayParam_TornTimeLimitSec"
+            android:maxLength="2"
+            android:title="Torn Time Limit Sec"></EditTextPreference>
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:key="service_param_detail"
+        android:title="service param detail">
+        <EditTextPreference
+            android:dialogTitle="Service data"
+            android:key="rupay_RupayServParam_ServiceData"
+            android:maxLength="192"
+            android:title="Service data"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="PRMacq for legacy card"
+            android:key="rupay_RupayServParam_LegacyPRMacq"
+            android:maxLength="16"
+            android:title="PRMacq for legacy card"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="PRMacq KCV for legacy card"
+            android:key="rupay_RupayServParam_LegacyKCV"
+            android:maxLength="6"
+            android:title="PRMacq KCV for legacy card"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="NonLegacyPRMacqIndex"
+            android:gravity="center_vertical|right"
+            android:inputType="numberDecimal"
+            android:key="rupay_RupayServParam_NonLegacyPRMacqIndex"
+            android:maxLength="3"
+            android:title="NonLegacyPRMacqIndex"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="PRMiss"
+            android:key="rupay_RupayServParam_PRMiss"
+            android:maxLength="32"
+            android:title="PRMiss"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="ServiceQualifier"
+            android:key="rupay_RupayServParam_ServiceQualifier"
+            android:maxLength="10"
+            android:title="ServiceQualifier"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="ServiceID(hex)"
+            android:gravity="center_vertical|right"
+            android:key="rupay_RupayServParam_ServiceID"
+            android:maxLength="4"
+            android:title="ServiceID(hex)"></EditTextPreference>
+
+        <EditTextPreference
+            android:dialogTitle="ServiceManagerInfo"
+            android:key="rupay_RupayServParam_ServiceManagerInfo"
+            android:maxLength="4"
+            android:title="ServiceManagerInfo"></EditTextPreference>
+
+        <SwitchPreference
+            android:key="rupay_RupayServParam_LegacyServiceCreate"
+            android:summaryOff="not support"
+            android:summaryOn="support"
+            android:title="LegacyServiceCreate" />
+
+        <SwitchPreference
+            android:key="rupay_RupayServParam_ServiceCreate"
+            android:summaryOff="not support"
+            android:summaryOn="support"
+            android:title="ServiceCreate" />
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

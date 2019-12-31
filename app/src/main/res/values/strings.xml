@@ -706,4 +706,10 @@
     <string name="field55_track1data">(Magnetic Track 1 Data):</string>
     <string name="field55_track2data">(Magnetic Track 2 Data):</string>
     <string name="field55_TSI">(TSI):</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="param_settings">Param Settings</string>
+    <string name="trans_process">Trans Process</string>
+    <string name="tac_default_value">0000000000</string>
+    <string name="app_ver_default_value">0001</string>
 </resources>

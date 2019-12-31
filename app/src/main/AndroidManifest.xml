@@ -13,6 +13,15 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_FRAMEBUFFER" />
+
+    <uses-permission android:name="android.permission.NFC" />
+
+
+
+
+
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/tps900"
@@ -47,6 +56,10 @@
         <activity android:name=".ActivityPrinter" android:launchMode="singleTask"/>
         <activity android:name=".ActivityTPMir" android:launchMode="singleTask"/>
         <activity android:name=".ActivityTPMirParam" android:launchMode="singleTask"/>
+        <activity android:name=".ActivityRupay" android:launchMode="singleTask"/>
+        <activity android:name=".ActivityAmex" android:launchMode="singleTask"/>
+        <activity android:name=".ActivityRupayParam" android:launchMode="singleTask"/>
+        <activity android:name=".AmexConfig_Activity" android:launchMode="singleTask"/>
     </application>
 
 </manifest>

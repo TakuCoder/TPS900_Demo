@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="9F6E (Enhanced Contactless Reader Capabilities)">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="setting_contact_mode"
+            android:tag="1"
+            android:title="Contact Mode support" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="setting_Mag_Mode"
+            android:tag="1"
+            android:title="Magstripe Mode support" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="setting_moblie_cvm"
+            android:tag="1"
+            android:title="Mobile CVM" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="setting_onlinepin"
+            android:tag="1"
+            android:title="Online PIN" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="setting_signature"
+            android:tag="1"
+            android:title="Signature" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="setting_delayauthor"
+            android:tag="1"
+            android:title="Delay Authorisation" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="setting_termexempt"
+            android:tag="1"
+            android:title="Exempt from No CVM Checks" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="9F6D (Contactless Reader Capabilities)">
+        <ListPreference
+            android:key="setting_CL_Reader_Caps"
+            android:title="Contactless Reader Capabilities"
+            android:dialogTitle="Contactless Reader Capabilities"
+            android:defaultValue="192"
+            android:entries="@array/list_CL_reader_caps_name"
+            android:entryValues="@array/list_CL_reader_caps_value"/>
+        <!--<SwitchPreference-->
+            <!--android:defaultValue="true"-->
+            <!--android:key="setting_mag_cvm"-->
+            <!--android:tag="1"-->
+            <!--android:title="Magstripe CVM Required" />-->
+
+        <!--<SwitchPreference-->
+            <!--android:defaultValue="true"-->
+            <!--android:key="setting_emv_cvm"-->
+            <!--android:tag="1"-->
+            <!--android:title="EMV and Magstripe CVM Required"/>-->
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Terminal Options">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="setting_key_revocation"
+            android:summary="Key Revocation on/off"
+            android:title="Key Revocation" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="setting_exception"
+            android:summary="Support Exception List"
+            android:title="Support Exception" />
+
+        <SwitchPreference
+        android:defaultValue="false"
+        android:key="setting_defaultlimits"
+        android:summary="Enable Default Limits"
+        android:title="Default Limits" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="setting_dynamiclimits"
+            android:summary="Enable Dynamic Limits"
+            android:title="Dynamic Limits" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="setting_unableonline"
+            android:summary="Can not go online before transaction "
+            android:title="Unable go online" />
+
+        <ListPreference
+            android:key="setting_checkcda"
+            android:title="Detect CDA Failed Mode"
+            android:dialogTitle="Detect CDA Failed Mode"
+            android:defaultValue="0"
+            android:entries="@array/list_dectec_cda_name"
+            android:entryValues="@array/list_dectec_cda_value"/>
+
+        <ListPreference
+            android:key="setting_termianltype"
+            android:title="Terminal Type"
+            android:dialogTitle="Terminal Type"
+            android:defaultValue="34"
+            android:entries="@array/list_terminal_type_name"
+            android:entryValues="@array/list_terminal_type_value"/>
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="setting_atm"
+            android:title="ATM Terminal" />
+
+        <EditTextPreference
+            android:title="MagStripe Unpredictable Number Range"
+            android:key="setting_magrangenum"
+            android:defaultValue="60"
+            android:maxLength="2"
+            android:inputType="number"
+            android:dialogTitle="Number Range(1-60)" />
+
+        <EditTextPreference
+            android:title="Message Hold Time(Ms)"
+            android:key="setting_holdtime"
+            android:defaultValue="300"
+            android:maxLength="4"
+            android:inputType="number"
+            android:dialogTitle="Message Hold Time(Ms)" />
+
+        <EditTextPreference
+            android:title="Country Code"
+            android:key="setting_countrycode"
+            android:defaultValue="620"
+            android:maxLength="3"
+            android:inputType="number"
+            android:dialogTitle="Country Code" />
+
+        <EditTextPreference
+            android:title="Application Version"
+            android:key="setting_appver"
+            android:defaultValue="@string/app_ver_default_value"
+            android:maxLength="4"
+            android:inputType="number"
+            android:dialogTitle="Application Version" />
+
+        <EditTextPreference
+            android:title="9F33 (Terminal Capabilities)"
+            android:key="setting_termcap"
+            android:defaultValue="E000C8"
+            android:maxLength="6"
+            android:dialogTitle="Terminal Capabilities(Hex)" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="TACs Settings">
+        <EditTextPreference
+            android:key="setting_tac_denial"
+            android:defaultValue="@string/tac_default_value"
+            android:summary="@string/tac_default_value"
+            android:title="TAC-Denial"
+            android:dialogTitle="TAC-Denial(Hex)"
+            android:maxLength="10"/>
+
+        <EditTextPreference
+            android:key="setting_tac_online"
+            android:defaultValue="@string/tac_default_value"
+            android:summary="@string/tac_default_value"
+            android:title="TAC-Online"
+            android:dialogTitle="TAC-Online(Hex)"
+            android:maxLength="10"/>
+
+        <EditTextPreference
+            android:key="setting_tac_default"
+            android:defaultValue="@string/tac_default_value"
+            android:summary="@string/tac_default_value"
+            android:title="TAC-Default"
+            android:dialogTitle="TAC-Default(Hex)"
+            android:maxLength="10"/>
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="Merchant Settings">
+
+        <EditTextPreference
+            android:title="Merchant Name and Location"
+            android:key="setting_merchantname"
+            android:defaultValue="Railway Operator"
+            android:dialogTitle="Merchant Name and Location" />
+
+        <EditTextPreference
+            android:title="Merchant Category Code"
+            android:key="setting_merchantcode"
+            android:defaultValue="4112"
+            android:maxLength="4"
+            android:dialogTitle="Merchant Category Code(Hex)" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

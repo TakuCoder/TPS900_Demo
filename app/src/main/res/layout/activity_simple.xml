@@ -68,6 +68,31 @@
 
 
     <Button
+        android:id="@+id/btn_pin_Customize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_number_violet_shape"
+        style="@style/buttonNumberStyle"
+        android:text="get pin(Customize)" />
+
+    <Button
+        android:id="@+id/btn_pin_write_dbk_ksn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_number_violet_shape"
+        style="@style/buttonNumberStyle"
+        android:text="write DBK and KSN" />
+
+    <Button
+        android:id="@+id/btn_pin_dukpt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_number_violet_shape"
+        style="@style/buttonNumberStyle"
+        android:text="DUKPT get PIN and MAC" />
+
+
+    <Button
         android:id="@+id/btn_writedeskey"
         android:layout_width="match_parent"
         style="@style/buttonNumberStyle"

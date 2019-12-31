@@ -216,7 +216,7 @@ public class ActivityVisaPaywave extends Activity {
             public void onClick(View v) {
                 EmvService.Emv_RemoveAllCapk();
                 AppendDis("remove all capk !");
-                DefaultAPPCAPK.Add_All_CAPK_Test();
+                DefaultAPPCAPK.Add_All_CAPK();
                 AppendDis("add all capk !");
             }
         });

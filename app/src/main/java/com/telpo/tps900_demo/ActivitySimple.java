@@ -16,8 +16,11 @@ import android.widget.Toast;
 
 import com.telpo.emv.EmvService;
 import com.telpo.pinpad.PinParam;
+import com.telpo.pinpad.PinTextInfo;
 import com.telpo.pinpad.PinpadService;
 import com.telpo.util.StringUtil;
+
+import java.io.File;
 
 /*
  示例说明：（数据都是用十六进制表示）
@@ -54,6 +57,7 @@ public class ActivitySimple extends Activity {
     Button btn_des;
     Button btn_writepinkey;
     Button bn_dukpt_getpin;
+    Button bn_pin_Customize;
     Button bn_wrt_bdk;
     EditText edt_pinblock;
     EditText edt_pindes;
@@ -62,7 +66,7 @@ public class ActivitySimple extends Activity {
     Button btn_2;
     Button btn_3;
     Handler handler;
-
+    PinTextInfo[] pinText;
     TextView title_tv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -317,7 +321,7 @@ public class ActivitySimple extends Activity {
                 pinParam.KeyIndex = currPinKeyIndex;    //密钥索引
                 pinParam.MaxPinLen = 4;                 //密码最大长度
                 pinParam.MinPinLen = 4;                 //密码最小长度
-                pinParam.WaitSec = 20;                  //密码键盘超时时间
+                pinParam.WaitSec = 60;                  //密码键盘超时时间
                 //最后加密结果在pinParam.Pin_Block中
                 new Thread(new Runnable() {
                     @Override
@@ -346,7 +350,159 @@ public class ActivitySimple extends Activity {
             }
         });
 
+        //使用Dukpt（一次一密）步骤：
+        //1、写入BDK,KSN。（在这之前必须已经成功打开PinpadService）
+        //2、调用PinpadService.TP_PinpadDukptSessionStart()。
+        //3、PinpadService.TP_PinpadDukptGetPin(pinParam)或者 PinpadService.TP_PinpadDukptGetMac(Indate,MAC,KSN)（MAC,KSN为函数输出）;
+        //4、PinpadService.TP_PinpadDukptSessionEnd();
+        bn_wrt_bdk = (Button) findViewById(R.id.btn_pin_write_dbk_ksn);
+        bn_wrt_bdk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int ret = -1;
+                byte[] BDK = StringUtil.hexStringToByte("0123456789ABCDEFFEDCBA9876543210");
+                byte[] KSN = StringUtil.hexStringToByte("FFFF9876543210E00000");
+                ret = PinpadService.TP_PinpadWriteDukptKey(BDK, KSN, 1, PinpadService.KEY_WRITE_DIRECT, 0);
+                if (ret == 0) {
+                    Toast.makeText(ActivitySimple.this, "success!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ActivitySimple.this, "FAIL!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.d("FanZ", "TP_PinpadWriteDukptKey:" + ret);
+            }
+        });
 
+
+        bn_dukpt_getpin = (Button) findViewById(R.id.btn_pin_dukpt);
+        bn_dukpt_getpin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        PinpadService.TP_PinpadDukptSessionStart(1);
+                        int ret;
+                        //ret = PinpadService.TP_PinpadDukptSessionStart();
+                        pinParam = new PinParam(ActivitySimple.this);
+                        pinParam.KeyIndex = 1;
+                        pinParam.WaitSec = 60;
+                        pinParam.MaxPinLen = 6;
+                        pinParam.MinPinLen = 4;
+                        pinParam.CardNo = "4012345678909";
+                        pinParam.IsShowCardNo = 1;
+                        pinParam.Amount = "123.00";
+                        ret = PinpadService.TP_PinpadDukptGetPin(pinParam);
+                        if (ret == PinpadService.PIN_OK) {
+                            byte[] MAC = new byte[8];
+                            byte[] KSN = new byte[10];
+                            byte Indate[] = "4012345678909D987".getBytes();
+                            ret = PinpadService.TP_PinpadDukptGetMac(Indate, MAC, KSN);
+                            Log.d("FanZ", "GetMac: " + ret);
+                            Log.d("FanZ", "mac: " + StringUtil.bytesToHexString(MAC));
+                            Log.d("FanZ", "KSN: " + StringUtil.bytesToHexString(KSN));
+                            final String mes = "PIN:" + StringUtil.bytesToHexString_upcase(pinParam.Pin_Block) +
+                                    "\nMAC:" + StringUtil.bytesToHexString_upcase(MAC) +
+                                    "\nKSN:" + StringUtil.bytesToHexString_upcase(KSN);
+                            Message m = new Message();
+                            m.what = MSG_SHOW_PINBLOCK;
+                            //获取结果
+                            m.obj = mes;
+                            handler.sendMessage(m);
+                        } else {
+                            Message m = new Message();
+                            m.what = MSG_SHOW_FAIL;
+                            m.obj = "" + ret;
+                            handler.sendMessage(m);
+                        }
+
+                        Log.d("FanZ", "TP_PinpadDukptGetPin: " + ret);
+                        Log.d("FanZ", "Pin_Block: " + StringUtil.bytesToHexString(pinParam.Pin_Block));
+                        Log.d("FanZ", "Curr_KSN: " + StringUtil.bytesToHexString(pinParam.Curr_KSN));
+                        ret = PinpadService.TP_PinpadDukptSessionEnd();
+                        Log.d("FanZ", "session end: " + ret);
+                        PinpadService.TP_PinpadDukptSessionEnd();
+                    }
+                }).start();
+            }
+        });
+
+        //Customize
+        bn_pin_Customize = (Button) findViewById(R.id.btn_pin_Customize);
+        bn_pin_Customize.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pinParam = new PinParam(ActivitySimple.this);
+                pinParam.CardNo = "4838340177005006";   //银行卡号
+                pinParam.IsShowCardNo = 0;
+                pinParam.KeyIndex = currPinKeyIndex;    //密钥索引
+                pinParam.MaxPinLen = 4;                 //密码最大长度
+                pinParam.MinPinLen = 4;                 //密码最小长度
+                pinParam.WaitSec = 60;                  //密码键盘超时时间
+                pinText = new PinTextInfo[4];
+                pinText[0] = new PinTextInfo();
+                pinText[0].FontColor = 0x0000FF;
+                pinText[0].FontFile = "";
+                pinText[0].FontSize = 48;
+                pinText[0].PosX = 60;
+                pinText[0].PosY = 60;
+//pinText[0].sText = "الهروي (ت 401هـ) في";
+                pinText[0].sText = "مع CNN بالعربية، ";
+
+                pinText[0].LanguageID = "ar";
+
+                pinText[1] = new PinTextInfo();
+                pinText[1].FontColor = 0xFF00FF;
+                pinText[1].FontFile = "";
+                pinText[1].FontSize = 32;
+                pinText[1].PosX = 20;
+                pinText[1].PosY = 140;
+                pinText[1].sText = "Islámico:niño";
+                pinText[1].LanguageID = "en";
+
+                pinText[2] = new PinTextInfo();
+                pinText[2].FontColor = 0xFF0000;
+
+                pinText[2].FontFile = new File(getFilesDir(),"DroidSansHindi.ttf").getAbsolutePath();
+                pinText[2].FontSize = 48;
+                pinText[2].PosX = 280;
+                pinText[2].PosY = 140;
+                pinText[2].sText = "ताजा ख़बरें";
+                pinText[2].LanguageID = "en";
+
+                pinText[3] = new PinTextInfo();
+                pinText[3].FontColor = 0xFF0000;
+                pinText[3].FontFile = "";
+                pinText[3].FontSize = 48;
+                pinText[3].PosX = 20;
+                pinText[3].PosY = 200;
+                pinText[3].sText = "天波";
+                pinText[3].LanguageID = "zh";
+                //最后加密结果在pinParam.Pin_Block中
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //返回PinpadService.PIN_OK成功，其他失败
+                        int i =PinpadService.TP_PinpadGetPinCustomize(pinParam, pinText,0,0,0);
+                        Log.d("FanZ", "TP_PinpadGetPin：" + i);
+                        if (i == PinpadService.PIN_OK) {
+                            Message m = new Message();
+                            m.what = MSG_SHOW_PINBLOCK;
+                            //获取结果
+                            m.obj = StringUtil.bytesToHexString_upcase(pinParam.Pin_Block);
+                            handler.sendMessage(m);
+                        } else {
+                            Message m = new Message();
+                            m.what = MSG_SHOW_FAIL;
+                            m.obj = "" + i;
+                            handler.sendMessage(m);
+                        }
+                        Log.d("FanZ", "run: " + bytesToHexString_upcase(pinParam.Pin_Block));
+
+                    }
+                }).start();
+            }
+        });
     }
 
     @Override
