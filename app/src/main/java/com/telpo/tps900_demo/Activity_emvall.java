@@ -1003,531 +1003,515 @@ public class Activity_emvall extends Activity {
                         stopPlayer.start();
                         Log.w("Read NFC card", "NFC: " + "timeout");
                     } else if (ret == 0) {
-                      int  cardtype = detectCardKernel();
-                      EmvService.NfcCloseReader();
-                      EmvService.NfcOpenReader(1000);
-                      Thread.sleep(500);
-                        ret = detectNFC();
-                        if (ret == -4) {
-                            progressDialog.dismiss();
-                            Log.w("Read NFC card", "NFC: " + "user cancel");
-                            rejectPlayer.start();
-                        } else if (ret == -1003) {
-                            progressDialog.dismiss();
-                            stopPlayer.start();
-                            Log.w("Read NFC card", "NFC: " + "timeout");
-                        } else if (ret == 0) {
-                            progressDialog.dismiss();
-                            switch (cardtype) {
-                                case EmvService.NFC_KERNEL_DEFAUT_CARD_VISA:
-                                    Log.e("yw:","This is a Visa card");
-                                    //Visa 初始化
-                                    QvsdcParam qvsdcParam = new QvsdcParam();
-                                    qvsdcParam.AMOUNT_Amount = 1000;
-                                    qvsdcParam.AMOUNT_CashbackAmount = 0;
-                                    qvsdcParam.AMOUNT_CurrCode = 840;
-                                    qvsdcParam.AMOUNT_CurrExp = 2;
+                        ret = detectCardKernel();
+                        progressDialog.dismiss();
+                        switch (ret) {
+                            case EmvService.NFC_KERNEL_DEFAUT_CARD_VISA:
+                                Log.e("yw:","This is a Visa card");
+                                //Visa 初始化
+                                QvsdcParam qvsdcParam = new QvsdcParam();
+                                qvsdcParam.AMOUNT_Amount = 1000;
+                                qvsdcParam.AMOUNT_CashbackAmount = 0;
+                                qvsdcParam.AMOUNT_CurrCode = 840;
+                                qvsdcParam.AMOUNT_CurrExp = 2;
 
-                                    qvsdcParam.SUPPORT_MSD = 0;
-                                    qvsdcParam.SUPPORT_EMV = 0;
-                                    qvsdcParam.SUPPORT_Signature = 1;
-                                    qvsdcParam.SUPPORT_OnlinePIN = 1;
-                                    qvsdcParam.SUPPORT_CashControl = 0;
-                                    qvsdcParam.SUPPORT_CashbackControl = 0;
-                                    qvsdcParam.SUPPORT_ZeroAmtCheck = 1;
-                                    qvsdcParam.SUPPORT_ZeroCheckType = 0;
+                                qvsdcParam.SUPPORT_MSD = 0;
+                                qvsdcParam.SUPPORT_EMV = 0;
+                                qvsdcParam.SUPPORT_Signature = 1;
+                                qvsdcParam.SUPPORT_OnlinePIN = 1;
+                                qvsdcParam.SUPPORT_CashControl = 0;
+                                qvsdcParam.SUPPORT_CashbackControl = 0;
+                                qvsdcParam.SUPPORT_ZeroAmtCheck = 1;
+                                qvsdcParam.SUPPORT_ZeroCheckType = 0;
 
-                                    ret = emvService.qVsdc_TransInit(qvsdcParam);
-                                    Log.w("readcard", "qVsdc_TransInit: " + ret);
-                                    //设置参数
+                                ret = emvService.qVsdc_TransInit(qvsdcParam);
+                                Log.w("readcard", "qVsdc_TransInit: " + ret);
+                                //设置参数
 
-                                    EmvParam mEMVParam;
-                                    mEMVParam = new EmvParam();
-                                    mEMVParam.MerchName = "Telpo".getBytes();
-                                    mEMVParam.MerchId = "123456789012345".getBytes();
-                                    mEMVParam.TermId = "12345678".getBytes();
-                                    mEMVParam.TerminalType = 0x22;
-                                    mEMVParam.Capability = new byte[]{(byte) 0xE0, (byte) 0xE9, (byte) 0xC8};
-                                    mEMVParam.ExCapability = new byte[]{(byte) 0xE0, 0x00, (byte) 0xF0, (byte) 0xA0, 0x01};
-                                    mEMVParam.CountryCode = new byte[]{(byte) 0x08, (byte) 0x40};
+                                EmvParam mEMVParam;
+                                mEMVParam = new EmvParam();
+                                mEMVParam.MerchName = "Telpo".getBytes();
+                                mEMVParam.MerchId = "123456789012345".getBytes();
+                                mEMVParam.TermId = "12345678".getBytes();
+                                mEMVParam.TerminalType = 0x22;
+                                mEMVParam.Capability = new byte[]{(byte) 0xE0, (byte) 0xE9, (byte) 0xC8};
+                                mEMVParam.ExCapability = new byte[]{(byte) 0xE0, 0x00, (byte) 0xF0, (byte) 0xA0, 0x01};
+                                mEMVParam.CountryCode = new byte[]{(byte) 0x08, (byte) 0x40};
 
-                                    mEMVParam.TransType = 0x00; //0x31
-                                    emvService.Emv_SetParam(mEMVParam);
-                                    //预处理
-                                    ret = emvService.qVsdc_Preprocess();
-                                    Log.w("readcard", "qVsdc_Preprocess: " + ret);
-                                    //开始流程
-                                    ret  = emvService.qVsdc_StartApp();
-                                    if (ret==emvService.QVSDC_ONLINE_APPROVE){
-                                        handler.sendMessage(handler.obtainMessage(2));//
+                                mEMVParam.TransType = 0x00; //0x31
+                                emvService.Emv_SetParam(mEMVParam);
+                                //预处理
+                                ret = emvService.qVsdc_Preprocess();
+                                Log.w("readcard", "qVsdc_Preprocess: " + ret);
+                                //开始流程
+                                ret  = emvService.qVsdc_StartApp();
+                                if (ret==emvService.QVSDC_ONLINE_APPROVE){
+                                    handler.sendMessage(handler.obtainMessage(2));//
 
 
-                                        while (waitsign){
-                                            Thread.sleep(500);
-                                        }
-                                        OKplayer.start();
-                                        try {
-                                            usbThermalPrinter.start(1);
-                                            usbThermalPrinter.reset();
-                                            usbThermalPrinter.setMonoSpace(true);
-                                            usbThermalPrinter.setGray(7);
-                                            usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE);
-                                            Bitmap bitmap1= BitmapFactory.decodeResource(context.getResources(),R.mipmap.telpoe);
-                                            Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap1, 244, 116);
-                                            usbThermalPrinter.printLogo(bitmap2,true);
+                                    while (waitsign){
+                                        Thread.sleep(500);
+                                    }
+                                    OKplayer.start();
+                                    try {
+                                        usbThermalPrinter.start(1);
+                                        usbThermalPrinter.reset();
+                                        usbThermalPrinter.setMonoSpace(true);
+                                        usbThermalPrinter.setGray(7);
+                                        usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE);
+                                        Bitmap bitmap1= BitmapFactory.decodeResource(context.getResources(),R.mipmap.telpoe);
+                                        Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap1, 244, 116);
+                                        usbThermalPrinter.printLogo(bitmap2,true);
 
-                                            usbThermalPrinter.setTextSize(30);
-                                            usbThermalPrinter.addString("POS SALES SLIP\n");
-                                            usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_LEFT);
-                                            usbThermalPrinter.setTextSize(24);
-                                            usbThermalPrinter.addString("MERCHANT NAME:             Telpo");
-                                            usbThermalPrinter.addString("MERCHANT NO:                  01");
-                                            usbThermalPrinter.addString("TERMINAL NO:                  02");
-                                            int i = usbThermalPrinter.measureText("CARD NO:" + cardNum);
-                                            int i1 = usbThermalPrinter.measureText(" ");
-                                            int SpaceNumber=(384-i)/i1;
-                                            String spaceString = "";
-                                            for (int j=0;j<SpaceNumber;j++){
-                                                spaceString+=" ";
-                                            }
-
-                                            usbThermalPrinter.addString("CARD NO:"+spaceString+cardNum);
-                                            usbThermalPrinter.addString("TRANS TYPE:                GOODS");
-                                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                            Date curDate = new Date(System.currentTimeMillis());//获取当前时间
-                                            String str = formatter.format(curDate);
-                                            usbThermalPrinter.addString("DATE/TIME:   "+str);
-                                            usbThermalPrinter.addString("EXP DATE:             2019-12-30" );
-                                            usbThermalPrinter.addString("BATCH NO:             2019000168");
-                                            usbThermalPrinter.addString("REFER NO:             2019001232");
-                                            i = usbThermalPrinter.measureText("AMOUNT:" + "$"+ Amount);
-                                            i1 = usbThermalPrinter.measureText(" ");
-                                            SpaceNumber=(384-i)/i1;
-                                            spaceString = "";
-                                            for (int j=0;j<SpaceNumber;j++){
-                                                spaceString+=" ";
-                                            }
-                                            usbThermalPrinter.addString("AMOUNT:" + spaceString +"$"+ Amount);
-                                            usbThermalPrinter.addString("CARD HOLDER SIGNATURE:");
-                                            usbThermalPrinter.printLogo(bitmap,true);
-                                            usbThermalPrinter.printString();
-                                            usbThermalPrinter.walkPaper(10);
-                                        } catch (TelpoException e) {
-                                            e.printStackTrace();
-                                        }finally {
-                                            usbThermalPrinter.stop();
+                                        usbThermalPrinter.setTextSize(30);
+                                        usbThermalPrinter.addString("POS SALES SLIP\n");
+                                        usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_LEFT);
+                                        usbThermalPrinter.setTextSize(24);
+                                        usbThermalPrinter.addString("MERCHANT NAME:             Telpo");
+                                        usbThermalPrinter.addString("MERCHANT NO:                  01");
+                                        usbThermalPrinter.addString("TERMINAL NO:                  02");
+                                        int i = usbThermalPrinter.measureText("CARD NO:" + cardNum);
+                                        int i1 = usbThermalPrinter.measureText(" ");
+                                        int SpaceNumber=(384-i)/i1;
+                                        String spaceString = "";
+                                        for (int j=0;j<SpaceNumber;j++){
+                                            spaceString+=" ";
                                         }
 
-                                        return 100;
-                                    }else {
-                                        FAILplayer.start();
+                                        usbThermalPrinter.addString("CARD NO:"+spaceString+cardNum);
+                                        usbThermalPrinter.addString("TRANS TYPE:                GOODS");
+                                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+                                        String str = formatter.format(curDate);
+                                        usbThermalPrinter.addString("DATE/TIME:   "+str);
+                                        usbThermalPrinter.addString("EXP DATE:             2019-12-30" );
+                                        usbThermalPrinter.addString("BATCH NO:             2019000168");
+                                        usbThermalPrinter.addString("REFER NO:             2019001232");
+                                        i = usbThermalPrinter.measureText("AMOUNT:" + "$"+ Amount);
+                                        i1 = usbThermalPrinter.measureText(" ");
+                                        SpaceNumber=(384-i)/i1;
+                                        spaceString = "";
+                                        for (int j=0;j<SpaceNumber;j++){
+                                            spaceString+=" ";
+                                        }
+                                        usbThermalPrinter.addString("AMOUNT:" + spaceString +"$"+ Amount);
+                                        usbThermalPrinter.addString("CARD HOLDER SIGNATURE:");
+                                        usbThermalPrinter.printLogo(bitmap,true);
+                                        usbThermalPrinter.printString();
+                                        usbThermalPrinter.walkPaper(10);
+                                    } catch (TelpoException e) {
+                                        e.printStackTrace();
+                                    }finally {
+                                        usbThermalPrinter.stop();
                                     }
 
+                                    return 100;
+                                }else {
+                                    FAILplayer.start();
+                                }
 
 
 
 
-                                case EmvService.NFC_KERNEL_DEFAUT_CARD_MASTER:
-                                    Log.w("NFC_CARD:","This is a Master card");
-                                    Log.e("yw:","This is a Master card");
+
+                            case EmvService.NFC_KERNEL_DEFAUT_CARD_MASTER:
+                                Log.w("NFC_CARD:","This is a Master card");
+                                Log.e("yw:","This is a Master card");
 
 
-                                    PaypassParam param = new PaypassParam();
-                                    String strTxt;
-                                    strTxt = "0000000000";
-                                    param.TermAddCaps = StringUtil.hexStringToByte(strTxt);
-                                    strTxt = "0002";
-                                    param.AppVersion = StringUtil.hexStringToByte(strTxt);
-                                    strTxt = "0001";
-                                    param.MagAppVersion = StringUtil.hexStringToByte(strTxt);
+                                PaypassParam param = new PaypassParam();
+                                String strTxt;
+                                strTxt = "0000000000";
+                                param.TermAddCaps = StringUtil.hexStringToByte(strTxt);
+                                strTxt = "0002";
+                                param.AppVersion = StringUtil.hexStringToByte(strTxt);
+                                strTxt = "0001";
+                                param.MagAppVersion = StringUtil.hexStringToByte(strTxt);
 
-                                    strTxt = "9F6A04";
-                                    param.UDOL = StringUtil.hexStringToByte(strTxt);
-                                    strTxt = "02";
-                                    param.KernelID = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "00";
-                                    param.CardInputCap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "08";
-                                    param.SecurityCap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "01";
-                                    param.MobileSupport = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "22";
-                                    param.TerminalType = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "00";
-                                    param.TermCountryCode = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "9F6A04";
+                                param.UDOL = StringUtil.hexStringToByte(strTxt);
+                                strTxt = "02";
+                                param.KernelID = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "00";
+                                param.CardInputCap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "08";
+                                param.SecurityCap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "01";
+                                param.MobileSupport = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "22";
+                                param.TerminalType = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "00";
+                                param.TermCountryCode = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
 
-                                    strTxt = "0D";
-                                    param.HoldTimeMs = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "13";
-                                    param.MessHoldTimeMs = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "01F4";
-                                    param.TimeOutSec = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt ="00";
-                                    param.FailedMsCount = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "0D";
+                                param.HoldTimeMs = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "13";
+                                param.MessHoldTimeMs = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "01F4";
+                                param.TimeOutSec = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt ="00";
+                                param.FailedMsCount = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
 
-                                    strTxt = "012C";
-                                    param.TornLifetimeSec = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "01";
-                                    param.TornLogCount = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "012C";
+                                param.TornLifetimeSec = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "01";
+                                param.TornLogCount = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
 
-                                    strTxt = "12";
-                                    param.RRPrExpectCAPDU = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "18";
-                                    param.RRPrExpectRAPDU = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "32";
-                                    param.RRPrMaxGrace = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "14";
-                                    param.RRPrMinGrace = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "012C";
-                                    param.RRPrAccuracyThreshold = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "32";
-                                    param.RRPrMismatchThreshold = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "12";
+                                param.RRPrExpectCAPDU = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "18";
+                                param.RRPrExpectRAPDU = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "32";
+                                param.RRPrMaxGrace = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "14";
+                                param.RRPrMinGrace = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "012C";
+                                param.RRPrAccuracyThreshold = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "32";
+                                param.RRPrMismatchThreshold = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
 
-                                    strTxt = "00";
-                                    param.Pre_Balance = StringUtil.hexStringToByte(strTxt)[0];
-                                    strTxt = "00";
-                                    param.Post_Balance = StringUtil.hexStringToByte(strTxt)[0];
-                                    strTxt = "30";
-                                    param.KernelConfig = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "F0";
-                                    param.MagCVM_Cap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "F0";
-                                    param.MagNoCVM_Cap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "60";
-                                    param.CVM_Cap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "08";
-                                    param.NoCVM_Cap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "00";
+                                param.Pre_Balance = StringUtil.hexStringToByte(strTxt)[0];
+                                strTxt = "00";
+                                param.Post_Balance = StringUtil.hexStringToByte(strTxt)[0];
+                                strTxt = "30";
+                                param.KernelConfig = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "F0";
+                                param.MagCVM_Cap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "F0";
+                                param.MagNoCVM_Cap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "60";
+                                param.CVM_Cap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "08";
+                                param.NoCVM_Cap = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
 
-                                    strTxt = "2710";
-                                    param.FloorLimit = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "7530";
-                                    param.NoOnDevCvmTransLimit = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "C350";
-                                    param.OnDevCvmTransLimit = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-                                    strTxt = "03E8";
-                                    param.CvmRequiedLimit = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
-
-
-                                    ret = emvService.Paypass_TransInit(param);
-                                    Log.e("yw","Paypass_TransInit: " + ret);
-                                    if (ret != EmvService.EMV_TRUE) {
-                                        break;
-                                    }
-
-                                    ret = emvService.Paypass_StartApp(900, 0, 978, 2, 0);
-                                    Log.e("yw","Paypass_StartApp: " + ret + "(0x" + Integer.toHexString(ret) + ")");
-                                    if (ret == PaypassResult.PAYPASS_STATUS_ONLINE) {
-                                        Log.e("yw","require online");
-                                    }
-
-                                    PaypassOutCome OutComeData = new PaypassOutCome();
-                                    PaypassUserData userData = new PaypassUserData();
-                                    PaypassErrorData errorData = new PaypassErrorData();
-                                    int  ret11 = emvService.Paypass_GetResult(OutComeData, userData, errorData);
-                                    Log.e("yw","Paypass_GetResult: " + ret11);
-                                    //获取卡号   请求联网
-                                    PinParam param1 = new PinParam(context);
-                                    int ret;
-                                    EmvTLV pan = new EmvTLV(0x5A);
-                                    ret = emvService.Emv_GetTLV(pan);
-                                    if(ret == EmvService.EMV_TRUE){
-                                        StringBuffer p = new StringBuffer(StringUtil.bytesToHexString(pan.Value));
-                                        if (p.charAt(p.toString().length()-1) == 'F'){
-                                            p.deleteCharAt(p.toString().length()-1);
-                                        }
-                                        param1.CardNo = p.toString();
-                                        cardNum=param1.CardNo;
-                                        Log.w("listener", "CardNo: " + param1.CardNo);
-                                    }else{
-                                        pan = new EmvTLV(0x57);
-                                        if(emvService.Emv_GetTLV(pan) == EmvService.EMV_TRUE){
-                                            String panstr = StringUtil.bytesToHexString(pan.Value);
-                                            Log.w("pan", "panstr: " + panstr);
-                                            int index = panstr.indexOf("D");
-                                            Log.w("pan", "index: " + index);
-                                            param1.CardNo = panstr.substring(0, index);
-                                            cardNum=param1.CardNo;
-                                        }
-                                    }
-
-                                    bUIThreadisRunning = true;
-                                    param1.KeyIndex = 1;
-                                    param1.WaitSec = 100;
-                                    param1.MaxPinLen = 6;
-                                    param1.MinPinLen= 4;
-                                    // param.CardNo = "5223402300485719";
-                                    param1.IsShowCardNo = 1;
-                                    param1.Amount = Amount;
-                                    PinpadService.Open(context);
-                                    wakeUpAndUnlock(context);
-                                    progressDialog.dismiss();// 显示密码键盘前  取消之前的提示
-                                    ret = PinpadService.TP_PinpadGetPin(param1);
-                                    //  pin-block
-                                    Log.e("yw", "TP_PinpadGetPin: " +ret +"\nPinblock: " +StringUtil.bytesToHexString(param1.Pin_Block) );
-                                    if ( ret == PinpadService.PIN_ERROR_CANCEL){
-                                        rejectPlayer.start();
-                                        mResult = EmvService.ERR_USERCANCEL;
-                                    }else if ( ret == PinpadService.PIN_OK && StringUtil.bytesToHexString(param1.Pin_Block).contains("00000000")){
-                                        rejectPlayer.start();
-                                        mResult = EmvService.ERR_NOPIN;
-                                    }else if ( ret == PinpadService.PIN_OK ){
-                                        handler.sendMessage(handler.obtainMessage(1));//
-                                        Thread.sleep(2000);
-                                        progressDialog.dismiss();
-                                        // 交易成功   验证签名   打印小票
-                                        handler.sendMessage(handler.obtainMessage(2));//
+                                strTxt = "2710";
+                                param.FloorLimit = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "7530";
+                                param.NoOnDevCvmTransLimit = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "C350";
+                                param.OnDevCvmTransLimit = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
+                                strTxt = "03E8";
+                                param.CvmRequiedLimit = StringUtil.bytes2int(StringUtil.hexStringToByte(strTxt));
 
 
-                                        while (waitsign){
-                                            Thread.sleep(500);
-                                        }
-                                        OKplayer.start();
-                                        try {
-                                            usbThermalPrinter.start(1);
-                                            usbThermalPrinter.reset();
-                                            usbThermalPrinter.setMonoSpace(true);
-                                            usbThermalPrinter.setGray(7);
-                                            usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE);
-                                            Bitmap bitmap1= BitmapFactory.decodeResource(context.getResources(),R.mipmap.telpoe);
-                                            Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap1, 244, 116);
-                                            usbThermalPrinter.printLogo(bitmap2,true);
-
-                                            usbThermalPrinter.setTextSize(30);
-                                            usbThermalPrinter.addString("POS SALES SLIP\n");
-                                            usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_LEFT);
-                                            usbThermalPrinter.setTextSize(24);
-                                            usbThermalPrinter.addString("MERCHANT NAME:             Telpo");
-                                            usbThermalPrinter.addString("MERCHANT NO:                  01");
-                                            usbThermalPrinter.addString("TERMINAL NO:                  02");
-                                            int i = usbThermalPrinter.measureText("CARD NO:" + cardNum);
-                                            int i1 = usbThermalPrinter.measureText(" ");
-                                            int SpaceNumber=(384-i)/i1;
-                                            String spaceString = "";
-                                            for (int j=0;j<SpaceNumber;j++){
-                                                spaceString+=" ";
-                                            }
-
-                                            usbThermalPrinter.addString("CARD NO:"+spaceString+cardNum);
-                                            usbThermalPrinter.addString("TRANS TYPE:                GOODS");
-                                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                            Date curDate = new Date(System.currentTimeMillis());//获取当前时间
-                                            String str = formatter.format(curDate);
-                                            usbThermalPrinter.addString("DATE/TIME:   "+str);
-                                            usbThermalPrinter.addString("EXP DATE:             2019-12-30" );
-                                            usbThermalPrinter.addString("BATCH NO:             2019000168");
-                                            usbThermalPrinter.addString("REFER NO:             2019001232");
-                                            i = usbThermalPrinter.measureText("AMOUNT:" + "$"+ Amount);
-                                            i1 = usbThermalPrinter.measureText(" ");
-                                            SpaceNumber=(384-i)/i1;
-                                            spaceString = "";
-                                            for (int j=0;j<SpaceNumber;j++){
-                                                spaceString+=" ";
-                                            }
-                                            usbThermalPrinter.addString("AMOUNT:" + spaceString +"$"+ Amount);
-                                            usbThermalPrinter.addString("CARD HOLDER SIGNATURE:");
-                                            usbThermalPrinter.printLogo(bitmap,true);
-                                            usbThermalPrinter.printString();
-                                            usbThermalPrinter.walkPaper(10);
-                                        } catch (TelpoException e) {
-                                            e.printStackTrace();
-                                        }finally {
-                                            usbThermalPrinter.stop();
-                                        }
-                                        return 100;
-
-                                    }else {
-                                        stopPlayer.start();
-                                        mResult = EmvService.EMV_FALSE;
-                                    }
-
-
+                                ret = emvService.Paypass_TransInit(param);
+                                Log.e("yw","Paypass_TransInit: " + ret);
+                                if (ret != EmvService.EMV_TRUE) {
                                     break;
-                                case EmvService.NFC_KERNEL_DEFAUT_CARD_UNIONPAY:
-
-                                    ret = emvService.Emv_TransInit();
-                                    Log.w("readcard", "Emv_TransInit: " + ret);
-                                {
-                                    EmvParam mEMVParam1;
-                                    mEMVParam1 = new EmvParam();
-                                    mEMVParam1.MerchName = "Telpo".getBytes();
-                                    mEMVParam1.MerchId = "123456789012345".getBytes();
-                                    mEMVParam1.TermId = "12345678".getBytes();
-                                    mEMVParam1.TerminalType = 0x22;
-                                    mEMVParam1.Capability = new byte[]{(byte) 0xE0, (byte) 0xE9, (byte) 0xC8};
-                                    mEMVParam1.ExCapability = new byte[]{(byte) 0xE0, 0x00, (byte) 0xF0, (byte) 0xA0, 0x01};
-                                    mEMVParam1.CountryCode = new byte[]{(byte) 0x08, (byte) 0x40};
-
-                                    mEMVParam1.TransType = 0x00; //0x31
-                                    emvService.qPboc_InitParam(mEMVParam1);
                                 }
-                                startMs = System.currentTimeMillis();
 
-                                ret = emvService.qPboc_Preprocess(1000, 2, 156, EmvService.KERNEL_QUICS);
-                                Log.w("readcard", "qPboc_Preprocess: " + ret);
-                                ret = emvService.qPboc_StartApp(EmvService.KERNEL_QUICS);
-                                {
-                                    EmvTLV tag9F5D = new EmvTLV(0x9F5D);
-                                    int ret1 = emvService.Emv_GetTLV(tag9F5D);
-                                    if (ret1 == EmvService.EMV_TRUE) {
-                                        Log.w("9F5D", "9F5D:" + StringUtil.bytesToHexString_upcase(tag9F5D.Value));
+                                ret = emvService.Paypass_StartApp(900, 0, 978, 2, 0);
+                                Log.e("yw","Paypass_StartApp: " + ret + "(0x" + Integer.toHexString(ret) + ")");
+                                if (ret == PaypassResult.PAYPASS_STATUS_ONLINE) {
+                                    Log.e("yw","require online");
+                                }
 
-                                    } else {
-                                        Log.w("9F5D", "no 9F5D");
+                                PaypassOutCome OutComeData = new PaypassOutCome();
+                                PaypassUserData userData = new PaypassUserData();
+                                PaypassErrorData errorData = new PaypassErrorData();
+                                int  ret11 = emvService.Paypass_GetResult(OutComeData, userData, errorData);
+                                Log.e("yw","Paypass_GetResult: " + ret11);
+                                //获取卡号   请求联网
+                                PinParam param1 = new PinParam(context);
+                                int ret;
+                                EmvTLV pan = new EmvTLV(0x5A);
+                                ret = emvService.Emv_GetTLV(pan);
+                                if(ret == EmvService.EMV_TRUE){
+                                    StringBuffer p = new StringBuffer(StringUtil.bytesToHexString(pan.Value));
+                                    if (p.charAt(p.toString().length()-1) == 'F'){
+                                        p.deleteCharAt(p.toString().length()-1);
+                                    }
+                                    param1.CardNo = p.toString();
+                                    cardNum=param1.CardNo;
+                                    Log.w("listener", "CardNo: " + param1.CardNo);
+                                }else{
+                                    pan = new EmvTLV(0x57);
+                                    if(emvService.Emv_GetTLV(pan) == EmvService.EMV_TRUE){
+                                        String panstr = StringUtil.bytesToHexString(pan.Value);
+                                        Log.w("pan", "panstr: " + panstr);
+                                        int index = panstr.indexOf("D");
+                                        Log.w("pan", "index: " + index);
+                                        param1.CardNo = panstr.substring(0, index);
+                                        cardNum=param1.CardNo;
                                     }
                                 }
-                                if (ret == EmvService.QPBOC_ARQC) {
-                                    //获取卡号   请求联网
-                                    PinParam param2 = new PinParam(context);
-                                    EmvTLV pan1 = new EmvTLV(0x5A);
-                                    ret = emvService.Emv_GetTLV(pan1);
-                                    if(ret == EmvService.EMV_TRUE){
-                                        StringBuffer p = new StringBuffer(StringUtil.bytesToHexString(pan1.Value));
-                                        if (p.charAt(p.toString().length()-1) == 'F'){
-                                            p.deleteCharAt(p.toString().length()-1);
-                                        }
-                                        param2.CardNo = p.toString();
-                                        cardNum=param2.CardNo;
-                                        Log.w("listener", "CardNo: " + param2.CardNo);
-                                    }else{
-                                        pan = new EmvTLV(0x57);
-                                        if(emvService.Emv_GetTLV(pan) == EmvService.EMV_TRUE){
-                                            String panstr = StringUtil.bytesToHexString(pan.Value);
-                                            Log.w("pan", "panstr: " + panstr);
-                                            int index = panstr.indexOf("D");
-                                            Log.w("pan", "index: " + index);
-                                            param2.CardNo = panstr.substring(0, index);
-                                            cardNum=param2.CardNo;
-                                        }
+
+                                bUIThreadisRunning = true;
+                                param1.KeyIndex = 1;
+                                param1.WaitSec = 100;
+                                param1.MaxPinLen = 6;
+                                param1.MinPinLen= 4;
+                                // param.CardNo = "5223402300485719";
+                                param1.IsShowCardNo = 1;
+                                param1.Amount = Amount;
+                                PinpadService.Open(context);
+                                wakeUpAndUnlock(context);
+                                progressDialog.dismiss();// 显示密码键盘前  取消之前的提示
+                                ret = PinpadService.TP_PinpadGetPin(param1);
+                                //  pin-block
+                                Log.e("yw", "TP_PinpadGetPin: " +ret +"\nPinblock: " +StringUtil.bytesToHexString(param1.Pin_Block) );
+                                if ( ret == PinpadService.PIN_ERROR_CANCEL){
+                                    rejectPlayer.start();
+                                    mResult = EmvService.ERR_USERCANCEL;
+                                }else if ( ret == PinpadService.PIN_OK && StringUtil.bytesToHexString(param1.Pin_Block).contains("00000000")){
+                                    rejectPlayer.start();
+                                    mResult = EmvService.ERR_NOPIN;
+                                }else if ( ret == PinpadService.PIN_OK ){
+                                    handler.sendMessage(handler.obtainMessage(1));//
+                                    Thread.sleep(2000);
+                                    progressDialog.dismiss();
+                                    // 交易成功   验证签名   打印小票
+                                    handler.sendMessage(handler.obtainMessage(2));//
+
+
+                                    while (waitsign){
+                                        Thread.sleep(500);
                                     }
+                                    OKplayer.start();
+                                    try {
+                                        usbThermalPrinter.start(1);
+                                        usbThermalPrinter.reset();
+                                        usbThermalPrinter.setMonoSpace(true);
+                                        usbThermalPrinter.setGray(7);
+                                        usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE);
+                                        Bitmap bitmap1= BitmapFactory.decodeResource(context.getResources(),R.mipmap.telpoe);
+                                        Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap1, 244, 116);
+                                        usbThermalPrinter.printLogo(bitmap2,true);
 
-                                    bUIThreadisRunning = true;
-                                    param2.KeyIndex = 1;
-                                    param2.WaitSec = 100;
-                                    param2.MaxPinLen = 6;
-                                    param2.MinPinLen= 4;
-                                    // param.CardNo = "5223402300485719";
-                                    param2.IsShowCardNo = 1;
-                                    param2.Amount = Amount;
-                                    PinpadService.Open(context);
-                                    wakeUpAndUnlock(context);
-                                    progressDialog.dismiss();// 显示密码键盘前  取消之前的提示
-                                    ret = PinpadService.TP_PinpadGetPin(param2);
-                                    //  pin-block
-                                    Log.e("yw", "TP_PinpadGetPin: " +ret +"\nPinblock: " +StringUtil.bytesToHexString(param2.Pin_Block) );
-                                    if ( ret == PinpadService.PIN_ERROR_CANCEL){
-                                        rejectPlayer.start();
-                                        mResult = EmvService.ERR_USERCANCEL;
-                                    }else if ( ret == PinpadService.PIN_OK && StringUtil.bytesToHexString(param2.Pin_Block).contains("00000000")){
-                                        rejectPlayer.start();
-                                        mResult = EmvService.ERR_NOPIN;
-                                    }else if ( ret == PinpadService.PIN_OK ){
-                                        handler.sendMessage(handler.obtainMessage(1));//
-                                        Thread.sleep(2000);
-                                        progressDialog.dismiss();
-                                        // 交易成功   验证签名   打印小票
-                                        handler.sendMessage(handler.obtainMessage(2));//
-
-
-                                        while (waitsign){
-                                            Thread.sleep(500);
+                                        usbThermalPrinter.setTextSize(30);
+                                        usbThermalPrinter.addString("POS SALES SLIP\n");
+                                        usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_LEFT);
+                                        usbThermalPrinter.setTextSize(24);
+                                        usbThermalPrinter.addString("MERCHANT NAME:             Telpo");
+                                        usbThermalPrinter.addString("MERCHANT NO:                  01");
+                                        usbThermalPrinter.addString("TERMINAL NO:                  02");
+                                        int i = usbThermalPrinter.measureText("CARD NO:" + cardNum);
+                                        int i1 = usbThermalPrinter.measureText(" ");
+                                        int SpaceNumber=(384-i)/i1;
+                                        String spaceString = "";
+                                        for (int j=0;j<SpaceNumber;j++){
+                                            spaceString+=" ";
                                         }
-                                        OKplayer.start();
-                                        try {
-                                            usbThermalPrinter.start(1);
-                                            usbThermalPrinter.reset();
-                                            usbThermalPrinter.setMonoSpace(true);
-                                            usbThermalPrinter.setGray(7);
-                                            usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE);
-                                            Bitmap bitmap1= BitmapFactory.decodeResource(context.getResources(),R.mipmap.telpoe);
-                                            Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap1, 244, 116);
-                                            usbThermalPrinter.printLogo(bitmap2,true);
 
-                                            usbThermalPrinter.setTextSize(30);
-                                            usbThermalPrinter.addString("POS SALES SLIP\n");
-                                            usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_LEFT);
-                                            usbThermalPrinter.setTextSize(24);
-                                            usbThermalPrinter.addString("MERCHANT NAME:             Telpo");
-                                            usbThermalPrinter.addString("MERCHANT NO:                  01");
-                                            usbThermalPrinter.addString("TERMINAL NO:                  02");
-                                            int i = usbThermalPrinter.measureText("CARD NO:" + cardNum);
-                                            int i1 = usbThermalPrinter.measureText(" ");
-                                            int SpaceNumber=(384-i)/i1;
-                                            String spaceString = "";
-                                            for (int j=0;j<SpaceNumber;j++){
-                                                spaceString+=" ";
-                                            }
-
-                                            usbThermalPrinter.addString("CARD NO:"+spaceString+cardNum);
-                                            usbThermalPrinter.addString("TRANS TYPE:                GOODS");
-                                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                            Date curDate = new Date(System.currentTimeMillis());//获取当前时间
-                                            String str = formatter.format(curDate);
-                                            usbThermalPrinter.addString("DATE/TIME:   "+str);
-                                            usbThermalPrinter.addString("EXP DATE:             2019-12-30" );
-                                            usbThermalPrinter.addString("BATCH NO:             2019000168");
-                                            usbThermalPrinter.addString("REFER NO:             2019001232");
-                                            i = usbThermalPrinter.measureText("AMOUNT:" + "$"+ Amount);
-                                            i1 = usbThermalPrinter.measureText(" ");
-                                            SpaceNumber=(384-i)/i1;
-                                            spaceString = "";
-                                            for (int j=0;j<SpaceNumber;j++){
-                                                spaceString+=" ";
-                                            }
-                                            usbThermalPrinter.addString("AMOUNT:" + spaceString +"$"+ Amount);
-                                            usbThermalPrinter.addString("CARD HOLDER SIGNATURE:");
-                                            usbThermalPrinter.printLogo(bitmap,true);
-                                            usbThermalPrinter.printString();
-                                            usbThermalPrinter.walkPaper(10);
-                                        } catch (TelpoException e) {
-                                            e.printStackTrace();
-                                        }finally {
-                                            usbThermalPrinter.stop();
+                                        usbThermalPrinter.addString("CARD NO:"+spaceString+cardNum);
+                                        usbThermalPrinter.addString("TRANS TYPE:                GOODS");
+                                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+                                        String str = formatter.format(curDate);
+                                        usbThermalPrinter.addString("DATE/TIME:   "+str);
+                                        usbThermalPrinter.addString("EXP DATE:             2019-12-30" );
+                                        usbThermalPrinter.addString("BATCH NO:             2019000168");
+                                        usbThermalPrinter.addString("REFER NO:             2019001232");
+                                        i = usbThermalPrinter.measureText("AMOUNT:" + "$"+ Amount);
+                                        i1 = usbThermalPrinter.measureText(" ");
+                                        SpaceNumber=(384-i)/i1;
+                                        spaceString = "";
+                                        for (int j=0;j<SpaceNumber;j++){
+                                            spaceString+=" ";
                                         }
-                                        return 100;
-
-                                    }else {
-                                        stopPlayer.start();
-                                        mResult = EmvService.EMV_FALSE;
+                                        usbThermalPrinter.addString("AMOUNT:" + spaceString +"$"+ Amount);
+                                        usbThermalPrinter.addString("CARD HOLDER SIGNATURE:");
+                                        usbThermalPrinter.printLogo(bitmap,true);
+                                        usbThermalPrinter.printString();
+                                        usbThermalPrinter.walkPaper(10);
+                                    } catch (TelpoException e) {
+                                        e.printStackTrace();
+                                    }finally {
+                                        usbThermalPrinter.stop();
                                     }
+                                    return 100;
 
                                 }else {
-                                    Log.e("yw_ucp   ",""+ret);
+                                    stopPlayer.start();
+                                    mResult = EmvService.EMV_FALSE;
                                 }
 
 
-
-                                // handler.sendMessage(handler.obtainMessage(3,"(This is a Unionpay card)"));
-                                Log.w("NFC_CARD:","This is a Unionpay card");
                                 break;
-                                case EmvService.NFC_KERNEL_DEFAUT_CARD_RUPAY:
-                                    handler.sendMessage(handler.obtainMessage(3,"(This is a Rupay card)"));
-                                    Log.w("NFC_CARD:","This is a Rupay card");
-                                    break;
-                                case EmvService.NFC_KERNEL_DEFAUT_CARD_AMEX:
-                                    handler.sendMessage(handler.obtainMessage(3,"(This is a Amex card)"));
-                                    Log.w("NFC_CARD:","This is a Amex card");
-                                    break;
-                                case EmvService.NFC_KERNEL_DEFAUT_CARD_DISCOVER:
-                                    handler.sendMessage(handler.obtainMessage(3,"(This is a Discovery card)"));
-                                    Log.w("NFC_CARD:","This is a Discovery card");
-                                    break;
-                                case EmvService.NFC_KERNEL_DEFAUT_CARD_JCB:
-                                    handler.sendMessage(handler.obtainMessage(3,"(This is a JCB card)"));
-                                    Log.w("NFC_CARD:","This is a JCB card");
-                                    break;
-                                case EmvService.NFC_KERNEL_DEFAUT_CARD_UNKNOWN:
-                                    handler.sendMessage(handler.obtainMessage(3,"(This is an unknown card)"));
-                                    Log.w("NFC_CARD:","This is an unknown card");
-                                    break;
-                                default:
-                                    Log.w("NFC_CARD:","card kernel error");
-                                    handler.sendMessage(handler.obtainMessage(3,"(card kernel error)"));
-                                    break;
+                            case EmvService.NFC_KERNEL_DEFAUT_CARD_UNIONPAY:
 
+                                ret = emvService.Emv_TransInit();
+                                Log.w("readcard", "Emv_TransInit: " + ret);
+                            {
+                                EmvParam mEMVParam1;
+                                mEMVParam1 = new EmvParam();
+                                mEMVParam1.MerchName = "Telpo".getBytes();
+                                mEMVParam1.MerchId = "123456789012345".getBytes();
+                                mEMVParam1.TermId = "12345678".getBytes();
+                                mEMVParam1.TerminalType = 0x22;
+                                mEMVParam1.Capability = new byte[]{(byte) 0xE0, (byte) 0xE9, (byte) 0xC8};
+                                mEMVParam1.ExCapability = new byte[]{(byte) 0xE0, 0x00, (byte) 0xF0, (byte) 0xA0, 0x01};
+                                mEMVParam1.CountryCode = new byte[]{(byte) 0x08, (byte) 0x40};
+
+                                mEMVParam1.TransType = 0x00; //0x31
+                                emvService.qPboc_InitParam(mEMVParam1);
                             }
-                        }
+                            startMs = System.currentTimeMillis();
 
-}else{
+                            ret = emvService.qPboc_Preprocess(1000, 2, 156, EmvService.KERNEL_QUICS);
+                            Log.w("readcard", "qPboc_Preprocess: " + ret);
+                            ret = emvService.qPboc_StartApp(EmvService.KERNEL_QUICS);
+                            {
+                                EmvTLV tag9F5D = new EmvTLV(0x9F5D);
+                                int ret1 = emvService.Emv_GetTLV(tag9F5D);
+                                if (ret1 == EmvService.EMV_TRUE) {
+                                    Log.w("9F5D", "9F5D:" + StringUtil.bytesToHexString_upcase(tag9F5D.Value));
+
+                                } else {
+                                    Log.w("9F5D", "no 9F5D");
+                                }
+                            }
+                            if (ret == EmvService.QPBOC_ARQC) {
+                                //获取卡号   请求联网
+                                PinParam param2 = new PinParam(context);
+                                EmvTLV pan1 = new EmvTLV(0x5A);
+                                ret = emvService.Emv_GetTLV(pan1);
+                                if(ret == EmvService.EMV_TRUE){
+                                    StringBuffer p = new StringBuffer(StringUtil.bytesToHexString(pan1.Value));
+                                    if (p.charAt(p.toString().length()-1) == 'F'){
+                                        p.deleteCharAt(p.toString().length()-1);
+                                    }
+                                    param2.CardNo = p.toString();
+                                    cardNum=param2.CardNo;
+                                    Log.w("listener", "CardNo: " + param2.CardNo);
+                                }else{
+                                    pan = new EmvTLV(0x57);
+                                    if(emvService.Emv_GetTLV(pan) == EmvService.EMV_TRUE){
+                                        String panstr = StringUtil.bytesToHexString(pan.Value);
+                                        Log.w("pan", "panstr: " + panstr);
+                                        int index = panstr.indexOf("D");
+                                        Log.w("pan", "index: " + index);
+                                        param2.CardNo = panstr.substring(0, index);
+                                        cardNum=param2.CardNo;
+                                    }
+                                }
+
+                                bUIThreadisRunning = true;
+                                param2.KeyIndex = 1;
+                                param2.WaitSec = 100;
+                                param2.MaxPinLen = 6;
+                                param2.MinPinLen= 4;
+                                // param.CardNo = "5223402300485719";
+                                param2.IsShowCardNo = 1;
+                                param2.Amount = Amount;
+                                PinpadService.Open(context);
+                                wakeUpAndUnlock(context);
+                                progressDialog.dismiss();// 显示密码键盘前  取消之前的提示
+                                ret = PinpadService.TP_PinpadGetPin(param2);
+                                //  pin-block
+                                Log.e("yw", "TP_PinpadGetPin: " +ret +"\nPinblock: " +StringUtil.bytesToHexString(param2.Pin_Block) );
+                                if ( ret == PinpadService.PIN_ERROR_CANCEL){
+                                    rejectPlayer.start();
+                                    mResult = EmvService.ERR_USERCANCEL;
+                                }else if ( ret == PinpadService.PIN_OK && StringUtil.bytesToHexString(param2.Pin_Block).contains("00000000")){
+                                    rejectPlayer.start();
+                                    mResult = EmvService.ERR_NOPIN;
+                                }else if ( ret == PinpadService.PIN_OK ){
+                                    handler.sendMessage(handler.obtainMessage(1));//
+                                    Thread.sleep(2000);
+                                    progressDialog.dismiss();
+                                    // 交易成功   验证签名   打印小票
+                                    handler.sendMessage(handler.obtainMessage(2));//
+
+
+                                    while (waitsign){
+                                        Thread.sleep(500);
+                                    }
+                                    OKplayer.start();
+                                    try {
+                                        usbThermalPrinter.start(1);
+                                        usbThermalPrinter.reset();
+                                        usbThermalPrinter.setMonoSpace(true);
+                                        usbThermalPrinter.setGray(7);
+                                        usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE);
+                                        Bitmap bitmap1= BitmapFactory.decodeResource(context.getResources(),R.mipmap.telpoe);
+                                        Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap1, 244, 116);
+                                        usbThermalPrinter.printLogo(bitmap2,true);
+
+                                        usbThermalPrinter.setTextSize(30);
+                                        usbThermalPrinter.addString("POS SALES SLIP\n");
+                                        usbThermalPrinter.setAlgin(UsbThermalPrinter.ALGIN_LEFT);
+                                        usbThermalPrinter.setTextSize(24);
+                                        usbThermalPrinter.addString("MERCHANT NAME:             Telpo");
+                                        usbThermalPrinter.addString("MERCHANT NO:                  01");
+                                        usbThermalPrinter.addString("TERMINAL NO:                  02");
+                                        int i = usbThermalPrinter.measureText("CARD NO:" + cardNum);
+                                        int i1 = usbThermalPrinter.measureText(" ");
+                                        int SpaceNumber=(384-i)/i1;
+                                        String spaceString = "";
+                                        for (int j=0;j<SpaceNumber;j++){
+                                            spaceString+=" ";
+                                        }
+
+                                        usbThermalPrinter.addString("CARD NO:"+spaceString+cardNum);
+                                        usbThermalPrinter.addString("TRANS TYPE:                GOODS");
+                                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+                                        String str = formatter.format(curDate);
+                                        usbThermalPrinter.addString("DATE/TIME:   "+str);
+                                        usbThermalPrinter.addString("EXP DATE:             2019-12-30" );
+                                        usbThermalPrinter.addString("BATCH NO:             2019000168");
+                                        usbThermalPrinter.addString("REFER NO:             2019001232");
+                                        i = usbThermalPrinter.measureText("AMOUNT:" + "$"+ Amount);
+                                        i1 = usbThermalPrinter.measureText(" ");
+                                        SpaceNumber=(384-i)/i1;
+                                        spaceString = "";
+                                        for (int j=0;j<SpaceNumber;j++){
+                                            spaceString+=" ";
+                                        }
+                                        usbThermalPrinter.addString("AMOUNT:" + spaceString +"$"+ Amount);
+                                        usbThermalPrinter.addString("CARD HOLDER SIGNATURE:");
+                                        usbThermalPrinter.printLogo(bitmap,true);
+                                        usbThermalPrinter.printString();
+                                        usbThermalPrinter.walkPaper(10);
+                                    } catch (TelpoException e) {
+                                        e.printStackTrace();
+                                    }finally {
+                                        usbThermalPrinter.stop();
+                                    }
+                                    return 100;
+
+                                }else {
+                                    stopPlayer.start();
+                                    mResult = EmvService.EMV_FALSE;
+                                }
+
+                            }else {
+                                Log.e("yw_ucp   ",""+ret);
+                            }
+
+
+
+                            // handler.sendMessage(handler.obtainMessage(3,"(This is a Unionpay card)"));
+                            Log.w("NFC_CARD:","This is a Unionpay card");
+                            break;
+                            case EmvService.NFC_KERNEL_DEFAUT_CARD_RUPAY:
+                                handler.sendMessage(handler.obtainMessage(3,"(This is a Rupay card)"));
+                                Log.w("NFC_CARD:","This is a Rupay card");
+                                break;
+                            case EmvService.NFC_KERNEL_DEFAUT_CARD_AMEX:
+                                handler.sendMessage(handler.obtainMessage(3,"(This is a Amex card)"));
+                                Log.w("NFC_CARD:","This is a Amex card");
+                                break;
+                            case EmvService.NFC_KERNEL_DEFAUT_CARD_DISCOVER:
+                                handler.sendMessage(handler.obtainMessage(3,"(This is a Discovery card)"));
+                                Log.w("NFC_CARD:","This is a Discovery card");
+                                break;
+                            case EmvService.NFC_KERNEL_DEFAUT_CARD_JCB:
+                                handler.sendMessage(handler.obtainMessage(3,"(This is a JCB card)"));
+                                Log.w("NFC_CARD:","This is a JCB card");
+                                break;
+                            case EmvService.NFC_KERNEL_DEFAUT_CARD_UNKNOWN:
+                                handler.sendMessage(handler.obtainMessage(3,"(This is an unknown card)"));
+                                Log.w("NFC_CARD:","This is an unknown card");
+                                break;
+                            default:
+                                Log.w("NFC_CARD:","card kernel error");
+                                handler.sendMessage(handler.obtainMessage(3,"(card kernel error)"));
+                                break;
+
+                        }}else{
                         progressDialog.dismiss();
                         stopPlayer.start();
                         Log.w("Read NFC card", "NFC: " + "detect error:" + ret);
